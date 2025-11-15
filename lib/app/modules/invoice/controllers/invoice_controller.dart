@@ -1,4 +1,3 @@
-
 // ============ modules/invoice/controllers/invoice_controller.dart ============
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -164,6 +163,7 @@ class InvoiceController extends GetxController {
 
       const uuid = Uuid();
       final isGuestMode = SharedPrefsService.isGuestMode;
+      final isEditMode = editingInvoice != null;
 
       final invoice = InvoiceModel(
         id: editingInvoice?.id ?? uuid.v4(),
@@ -184,33 +184,47 @@ class InvoiceController extends GetxController {
 
       // Save to local first
       await HiveService.saveInvoice(invoice);
+      print('✓ Saved to Hive');
 
-      // If logged in, save to cloud
+      // If logged in, save/update to cloud
       if (!isGuestMode && SupabaseService.isLoggedIn) {
         try {
-          if (editingInvoice != null) {
+          if (isEditMode) {
+            print('🔄 Updating to cloud...');
             await SupabaseService.updateInvoice(invoice.id, invoice);
+            print('✓ Updated to cloud');
           } else {
-            final cloudId = await SupabaseService.createInvoice(invoice);
-            invoice.id = cloudId;
-            invoice.isSynced = true;
-            await HiveService.saveInvoice(invoice);
+            print('🔄 Creating in cloud...');
+            await SupabaseService.createInvoice(invoice);
+            print('✓ Created in cloud');
           }
+          
+          // Mark as synced
+          invoice.isSynced = true;
+          await HiveService.saveInvoice(invoice);
         } catch (e) {
-          // Ignore cloud errors, data is saved locally
-          debugPrint('Cloud sync failed: $e');
+          print('⚠️ Cloud sync failed: $e');
+          // Continue anyway, data is saved locally
+          Get.snackbar(
+            'Warning',
+            'Saved locally, but cloud sync failed. Will retry on manual sync.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+          );
         }
       }
 
       Get.back();
       Get.snackbar(
         'Berhasil',
-        editingInvoice != null ? 'Nota berhasil diupdate' : 'Nota berhasil dibuat',
+        isEditMode ? 'Nota berhasil diupdate' : 'Nota berhasil dibuat',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
     } catch (e) {
+      print('❌ Error saving invoice: $e');
       Get.snackbar(
         'Error',
         'Gagal menyimpan nota: ${e.toString()}',
@@ -225,15 +239,21 @@ class InvoiceController extends GetxController {
 
   Future<void> deleteInvoice(String id) async {
     try {
+      final isGuestMode = SharedPrefsService.isGuestMode;
+      
       // Delete from local
       await HiveService.deleteInvoice(id);
+      print('✓ Deleted from Hive');
 
       // Delete from cloud if logged in
-      if (!SharedPrefsService.isGuestMode && SupabaseService.isLoggedIn) {
+      if (!isGuestMode && SupabaseService.isLoggedIn) {
         try {
+          print('🔄 Deleting from cloud...');
           await SupabaseService.deleteInvoice(id);
+          print('✓ Deleted from cloud');
         } catch (e) {
-          debugPrint('Cloud delete failed: $e');
+          print('⚠️ Cloud delete failed: $e');
+          // Continue anyway
         }
       }
 
@@ -246,6 +266,7 @@ class InvoiceController extends GetxController {
         colorText: Colors.white,
       );
     } catch (e) {
+      print('❌ Error deleting invoice: $e');
       Get.snackbar(
         'Error',
         'Gagal menghapus nota: ${e.toString()}',

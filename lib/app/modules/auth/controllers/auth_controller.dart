@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../data/services/supabase_service.dart';
 import '../../../data/services/shared_prefs_service.dart';
 import '../../../routes/app_routes.dart';
+import '../../../core/utils/navigation_utils.dart';
 
 class AuthController extends GetxController {
   final emailController = TextEditingController();
@@ -21,7 +22,7 @@ class AuthController extends GetxController {
 
   void checkAuthStatus() {
     if (SupabaseService.isLoggedIn && !SharedPrefsService.isGuestMode) {
-      Get.offAllNamed(Routes.HOME);
+      NavigationUtils.safeOffAllNamed(Routes.HOME);
     }
   }
 
@@ -57,7 +58,7 @@ class AuthController extends GetxController {
 
       if (user != null) {
         await SharedPrefsService.setGuestMode(false);
-        Get.offAllNamed(Routes.HOME);
+        NavigationUtils.safeOffAllNamed(Routes.HOME);
         Get.snackbar(
           'Berhasil',
           'Login berhasil! Selamat datang ${user.email}',
@@ -137,7 +138,7 @@ class AuthController extends GetxController {
 
   Future<void> continueAsGuest() async {
     await SharedPrefsService.setGuestMode(true);
-    Get.offAllNamed(Routes.HOME);
+    NavigationUtils.safeOffAllNamed(Routes.HOME);
     Get.snackbar(
       'Guest Mode',
       'Anda masuk sebagai guest. Data tidak akan tersinkronisasi ke cloud',

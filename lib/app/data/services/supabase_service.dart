@@ -19,11 +19,10 @@ class SupabaseService {
       );
       
       if (response.user != null) {
-        final user = response.user!;
         return UserModel(
-          id: user.id,
-          email: user.email!,
-          createdAt: DateTime.parse(user.createdAt),
+          id: response.user!.id,
+          email: response.user!.email!,
+          createdAt: DateTime.parse(response.user!.createdAt!),
         );
       }
       return null;
@@ -40,11 +39,10 @@ class SupabaseService {
       );
       
       if (response.user != null) {
-        final user = response.user!;
         return UserModel(
-          id: user.id,
-          email: user.email!,
-          createdAt: DateTime.parse(user.createdAt),
+          id: response.user!.id,
+          email: response.user!.email!,
+          createdAt: DateTime.parse(response.user!.createdAt!),
         );
       }
       return null;
@@ -60,27 +58,50 @@ class SupabaseService {
   // Invoices CRUD
   static Future<String> createInvoice(InvoiceModel invoice) async {
     try {
-      // Insert invoice
-      final invoiceData = await client
+      print('🔄 Creating invoice...');
+      print('User ID: ${currentUser?.id}');
+      print('Local Invoice ID: ${invoice.id}');
+
+      // Prepare invoice data - include local ID
+      final invoiceData = invoice.toSupabase();
+      invoiceData['id'] = invoice.id; // Use local UUID
+      
+      print('Invoice data: $invoiceData');
+
+      // Insert invoice with specific ID
+      final result = await client
           .from('invoices')
-          .insert(invoice.toSupabase())
+          .insert(invoiceData)
           .select()
           .single();
 
-      final invoiceId = invoiceData['id'].toString();
+      final invoiceId = result['id'].toString();
+      print('✓ Invoice created with ID: $invoiceId');
 
       // Insert invoice items
-      final items = invoice.items.map((item) {
-        return {
-          'invoice_id': invoiceId,
-          ...item.toJson(),
-        };
-      }).toList();
+      if (invoice.items.isNotEmpty) {
+        final items = invoice.items.map((item) {
+          return {
+            'invoice_id': invoiceId,
+            ...item.toJson(),
+          };
+        }).toList();
 
-      await client.from('invoice_items').insert(items);
+        print('🔄 Inserting ${items.length} items...');
+        await client.from('invoice_items').insert(items);
+        print('✓ Items inserted');
+      }
 
       return invoiceId;
+    } on PostgrestException catch (e) {
+      print('❌ PostgrestException:');
+      print('Message: ${e.message}');
+      print('Code: ${e.code}');
+      print('Details: ${e.details}');
+      print('Hint: ${e.hint}');
+      rethrow;
     } catch (e) {
+      print('❌ Error creating invoice: $e');
       rethrow;
     }
   }

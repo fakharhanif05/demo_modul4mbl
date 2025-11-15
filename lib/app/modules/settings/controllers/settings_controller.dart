@@ -5,6 +5,7 @@ import '../../../data/services/shared_prefs_service.dart';
 import '../../../data/services/hive_service.dart';
 import '../../../data/services/supabase_service.dart';
 import '../../../routes/app_routes.dart';
+import '../../../core/utils/navigation_utils.dart';
 
 class SettingsController extends GetxController {
   final isDarkMode = false.obs;
@@ -48,8 +49,8 @@ class SettingsController extends GetxController {
               }
               
               await SharedPrefsService.setGuestMode(false);
-              Get.offAllNamed(Routes.LOGIN);
-              
+              NavigationUtils.safeOffAllNamed(Routes.LOGIN);
+
               Get.snackbar(
                 'Logout',
                 'Berhasil logout',
