@@ -1,4 +1,3 @@
-
 // ============ hive_service.dart ============
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/service_model.dart';

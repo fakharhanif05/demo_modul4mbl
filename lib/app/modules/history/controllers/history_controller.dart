@@ -1,7 +1,10 @@
-// ============ modules/history/controllers/history_controller.dart ============
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../data/models/invoice_model.dart';
 import '../../../data/services/hive_service.dart';
+import '../../../data/services/supabase_service.dart';
+import '../../../data/services/shared_prefs_service.dart';
 
 class HistoryController extends GetxController {
   final invoices = <InvoiceModel>[].obs;
@@ -13,6 +16,8 @@ class HistoryController extends GetxController {
   void onInit() {
     super.onInit();
     loadInvoices();
+    // Auto fetch from cloud when screen opens
+    fetchFromCloud();
   }
 
   void loadInvoices() {
@@ -27,6 +32,33 @@ class HistoryController extends GetxController {
       Get.snackbar('Error', 'Gagal memuat riwayat: ${e.toString()}');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchFromCloud() async {
+    // Skip if guest mode
+    if (SharedPrefsService.isGuestMode) return;
+    if (!SupabaseService.isLoggedIn) return;
+
+    try {
+      print('🔄 Fetching invoices from cloud...');
+      final cloudInvoices = await SupabaseService.getInvoices();
+      print('✓ Fetched ${cloudInvoices.length} invoices from cloud');
+
+      // Save to local (loop each invoice)
+      for (var invoice in cloudInvoices) {
+        invoice.isSynced = true;
+        await HiveService.saveInvoice(invoice);
+      }
+
+      // Reload from local
+      loadInvoices();
+      print('✓ Local data updated');
+    } on PostgrestException catch (e) {
+      print('⚠️ PostgrestException: ${e.message}');
+    } catch (e) {
+      print('⚠️ Failed to fetch from cloud: $e');
+      // Don't show error to user, just use local data
     }
   }
 
