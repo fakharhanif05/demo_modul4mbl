@@ -35,6 +35,9 @@ dependencies:
   # Utils
   intl: ^0.18.1
   uuid: ^4.2.2
+  geolocator: ^11.0.0
+  flutter_map: ^7.0.1
+  latlong2: ^0.9.0
 
 dev_dependencies:
   flutter_test:

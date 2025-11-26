@@ -27,6 +27,11 @@ class InvoiceController extends GetxController {
   final selectedStatus = 'pending'.obs;
   final pickupDate = Rxn<DateTime>();
 
+  // Location Data untuk Tracking Antar Jemput
+  final customerLocationLat = Rxn<double>();
+  final customerLocationLng = Rxn<double>();
+  final customerLocationAddress = ''.obs;
+
   // UI State
   final isLoading = false.obs;
   final isSaving = false.obs;
@@ -65,6 +70,13 @@ class InvoiceController extends GetxController {
     selectedStatus.value = invoice.status;
     pickupDate.value = invoice.pickupDate;
     selectedServices.value = List.from(invoice.items);
+    
+    // Load location data jika ada
+    if (invoice.customerLatitude != null && invoice.customerLongitude != null) {
+      customerLocationLat.value = invoice.customerLatitude;
+      customerLocationLng.value = invoice.customerLongitude;
+    }
+    
     calculateTotal();
   }
 
@@ -140,7 +152,7 @@ class InvoiceController extends GetxController {
     final random = DateTime.now().millisecondsSinceEpoch % 1000;
     return 'INV-$dateStr-${random.toString().padLeft(3, '0')}';
   }
-
+  
   Future<void> saveInvoice() async {
     // Validation
     if (customerNameController.text.isEmpty) {
@@ -178,6 +190,10 @@ class InvoiceController extends GetxController {
         status: selectedStatus.value,
         createdAt: editingInvoice?.createdAt ?? DateTime.now(),
         pickupDate: pickupDate.value,
+        // Location untuk tracking antar jemput
+        customerLatitude: customerLocationLat.value,
+        customerLongitude: customerLocationLng.value,
+        // Simpan userId Supabase agar nota terhubung dengan akun di cloud
         userId: isGuestMode ? null : SupabaseService.currentUser?.id,
         isSynced: false,
       );
@@ -186,7 +202,7 @@ class InvoiceController extends GetxController {
       await HiveService.saveInvoice(invoice);
       print('✓ Saved to Hive');
 
-      // If logged in, save/update to cloud
+      // Jika bukan guest, cerminkan perubahan ke Supabase
       if (!isGuestMode && SupabaseService.isLoggedIn) {
         try {
           if (isEditMode) {
@@ -195,6 +211,7 @@ class InvoiceController extends GetxController {
             print('✓ Updated to cloud');
           } else {
             print('🔄 Creating in cloud...');
+            // Kirim nota baru ke tabel `invoices` Supabase
             await SupabaseService.createInvoice(invoice);
             print('✓ Created in cloud');
           }
@@ -245,7 +262,7 @@ class InvoiceController extends GetxController {
       await HiveService.deleteInvoice(id);
       print('✓ Deleted from Hive');
 
-      // Delete from cloud if logged in
+      // Hapus juga di Supabase supaya data antar device konsisten
       if (!isGuestMode && SupabaseService.isLoggedIn) {
         try {
           print('🔄 Deleting from cloud...');
@@ -289,6 +306,25 @@ class InvoiceController extends GetxController {
     if (date != null) {
       pickupDate.value = date;
     }
+  }
+
+  // Location Methods untuk Tracking Antar Jemput
+  void updateCustomerLocation(double latitude, double longitude, String address) {
+    customerLocationLat.value = latitude;
+    customerLocationLng.value = longitude;
+    customerLocationAddress.value = address;
+  }
+
+  void resetCustomerLocation() {
+    customerLocationLat.value = null;
+    customerLocationLng.value = null;
+    customerLocationAddress.value = '';
+  }
+
+  bool validateCustomerLocation() {
+    return customerLocationLat.value != null && 
+           customerLocationLng.value != null && 
+           customerLocationAddress.value.isNotEmpty;
   }
 
   @override

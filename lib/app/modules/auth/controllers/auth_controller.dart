@@ -21,6 +21,7 @@ class AuthController extends GetxController {
   }
 
   void checkAuthStatus() {
+    // Jika session Supabase masih aktif, langsung masuk ke beranda
     if (SupabaseService.isLoggedIn && !SharedPrefsService.isGuestMode) {
       NavigationUtils.safeOffAllNamed(Routes.HOME);
     }
@@ -51,6 +52,7 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       
+      // Pakai Supabase Auth untuk verifikasi email & password
       final user = await SupabaseService.signIn(
         emailController.text.trim(),
         passwordController.text,
@@ -107,6 +109,7 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       
+      // Registrasi akun baru via Supabase Auth
       final user = await SupabaseService.signUp(
         emailController.text.trim(),
         passwordController.text,

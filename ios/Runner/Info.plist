@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Aplikasi membutuhkan lokasi Anda untuk menampilkan posisi realtime di peta.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Lokasi digunakan untuk menampilkan pelacakan langsung, bahkan saat aplikasi di latar depan.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Kami memerlukan akses lokasi untuk mengukur akurasi GPS dan network provider.</string>
 </dict>
 </plist>

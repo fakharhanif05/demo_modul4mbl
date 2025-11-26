@@ -55,6 +55,7 @@ class SettingsView extends GetView<SettingsController> {
                                     ),
                                   ),
                                   const SizedBox(height: 4),
+                                  // Tampilkan email dari session Supabase aktif
                                   Text(
                                     SupabaseService.currentUser?.email ?? 'Unknown',
                                     style: const TextStyle(

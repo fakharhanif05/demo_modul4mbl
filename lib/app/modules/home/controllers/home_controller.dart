@@ -5,7 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../data/services/hive_service.dart';
 import '../../../data/services/supabase_service.dart';
 import '../../../data/services/shared_prefs_service.dart';
-import '../../../data/models/invoice_model.dart';
 
 class HomeController extends GetxController {
   final todayTransactions = 0.obs;
@@ -19,7 +18,7 @@ class HomeController extends GetxController {
     isGuestMode.value = SharedPrefsService.isGuestMode;
     loadDashboardData();
     
-    // Auto sync on app start if logged in
+    // Auto sync ke Supabase setiap kali aplikasi terbuka (jika sudah login)
     if (!isGuestMode.value && SupabaseService.isLoggedIn) {
       autoSyncFromCloud();
     }
@@ -42,6 +41,7 @@ class HomeController extends GetxController {
   Future<void> autoSyncFromCloud() async {
     try {
       print('🔄 Auto syncing from cloud...');
+      // Ambil semua nota user dari Supabase untuk menggantikan data lokal
       final cloudInvoices = await SupabaseService.getInvoices();
       
       // Save to local
@@ -95,6 +95,7 @@ class HomeController extends GetxController {
       print('Found ${unsyncedInvoices.length} unsynced invoices');
       
       if (unsyncedInvoices.isNotEmpty) {
+        // Upload nota lokal yang belum tersimpan di Supabase
         await SupabaseService.syncInvoices(unsyncedInvoices);
         
         // Mark as synced
@@ -107,6 +108,7 @@ class HomeController extends GetxController {
       
       // 2. Download all invoices from cloud
       print('\n2️⃣ Downloading invoices from cloud...');
+      // Unduh ulang semua nota milik user dari Supabase
       final cloudInvoices = await SupabaseService.getInvoices();
       print('✓ Downloaded ${cloudInvoices.length} invoices');
       

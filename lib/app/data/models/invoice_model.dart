@@ -49,6 +49,12 @@ class InvoiceModel extends HiveObject {
   @HiveField(14)
   bool isSynced;
 
+  @HiveField(15)
+  double? customerLatitude;
+
+  @HiveField(16)
+  double? customerLongitude;
+
   InvoiceModel({
     required this.id,
     required this.invoiceNumber,
@@ -65,6 +71,8 @@ class InvoiceModel extends HiveObject {
     this.completedDate,
     this.userId,
     this.isSynced = false,
+    this.customerLatitude,
+    this.customerLongitude,
   });
 
   factory InvoiceModel.fromJson(Map<String, dynamic> json) {
@@ -87,6 +95,8 @@ class InvoiceModel extends HiveObject {
       completedDate: json['completed_date'] != null ? DateTime.parse(json['completed_date']) : null,
       userId: json['user_id'],
       isSynced: json['is_synced'] ?? false,
+      customerLatitude: json['customer_latitude']?.toDouble(),
+      customerLongitude: json['customer_longitude']?.toDouble(),
     );
   }
 
@@ -107,9 +117,12 @@ class InvoiceModel extends HiveObject {
       'completed_date': completedDate?.toIso8601String(),
       'user_id': userId,
       'is_synced': isSynced,
+      'customer_latitude': customerLatitude,
+      'customer_longitude': customerLongitude,
     };
   }
 
+  /// Konversi objek ke payload sesuai kolom tabel `invoices` Supabase.
   Map<String, dynamic> toSupabase() {
     return {
       'invoice_number': invoiceNumber,
@@ -124,6 +137,8 @@ class InvoiceModel extends HiveObject {
       'pickup_date': pickupDate?.toIso8601String(),
       'completed_date': completedDate?.toIso8601String(),
       'user_id': userId,
+      'customer_latitude': customerLatitude,
+      'customer_longitude': customerLongitude,
     };
   }
 }

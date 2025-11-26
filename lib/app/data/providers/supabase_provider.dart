@@ -1,6 +1,7 @@
 // ============ supabase_provider.dart ============
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// Provider generik untuk akses tabel Supabase tanpa logika bisnis tambahan.
 class SupabaseProvider {
   final SupabaseClient _client = Supabase.instance.client;
 

@@ -17,9 +17,10 @@ void main() async {
   // Initialize SharedPreferences
   await SharedPrefsService.init();
   
-  // Initialize Supabase
+  // Inisialisasi Supabase agar SupabaseService bisa langsung memakai
+  // Supabase.instance.client untuk autentikasi dan CRUD nota.
   await Supabase.initialize(
-    url: 'https://ssvadbzpckuyxxxlrjww.supabase.co', // Ganti dengan URL Supabase Anda
+    url: 'https://ssvadbzpckuyxxxlrjww.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzdmFkYnpwY2t1eXh4eGxyand3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxMjY0MTQsImV4cCI6MjA3ODcwMjQxNH0.vnNVT6eK72tiEfopeD53eQG3S1_dMcSkdolx3k91VvQ', // Ganti dengan Anon Key Anda
   );
   
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
     final isDarkMode = SharedPrefsService.isDarkMode;
     
     return GetMaterialApp(
-      title: 'Laundry App',
+      title: 'Obral Laundry',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

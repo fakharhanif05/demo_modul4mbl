@@ -32,13 +32,15 @@ class InvoiceModelAdapter extends TypeAdapter<InvoiceModel> {
       completedDate: fields[12] as DateTime?,
       userId: fields[13] as String?,
       isSynced: fields[14] as bool,
+      customerLatitude: fields[15] as double?,
+      customerLongitude: fields[16] as double?,
     );
   }
 
   @override
   void write(BinaryWriter writer, InvoiceModel obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -68,7 +70,11 @@ class InvoiceModelAdapter extends TypeAdapter<InvoiceModel> {
       ..writeByte(13)
       ..write(obj.userId)
       ..writeByte(14)
-      ..write(obj.isSynced);
+      ..write(obj.isSynced)
+      ..writeByte(15)
+      ..write(obj.customerLatitude)
+      ..writeByte(16)
+      ..write(obj.customerLongitude);
   }
 
   @override

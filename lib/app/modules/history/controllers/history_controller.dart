@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../data/models/invoice_model.dart';
@@ -16,7 +15,7 @@ class HistoryController extends GetxController {
   void onInit() {
     super.onInit();
     loadInvoices();
-    // Auto fetch from cloud when screen opens
+    // Saat layar dibuka kita langsung tarik data terbaru dari Supabase
     fetchFromCloud();
   }
 
@@ -42,6 +41,7 @@ class HistoryController extends GetxController {
 
     try {
       print('🔄 Fetching invoices from cloud...');
+      // Ambil semua nota dari Supabase agar riwayat selalu terbaru
       final cloudInvoices = await SupabaseService.getInvoices();
       print('✓ Fetched ${cloudInvoices.length} invoices from cloud');
 

@@ -2,10 +2,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/invoice_model.dart';
 import '../models/user_model.dart';
 
+/// Service ini menjadi satu-satunya pintu komunikasi ke Supabase.
+/// - menyimpan state autentikasi (currentUser/isLoggedIn)
+/// - menyediakan CRUD nota + itemnya
+/// - dipakai controller lain untuk sinkronisasi Hive <-> cloud.
 class SupabaseService {
   static final SupabaseClient client = Supabase.instance.client;
 
-  // Auth
+  // ======== AUTH / SESSION ========
   static User? get currentUser => client.auth.currentUser;
   
   static bool get isLoggedIn => currentUser != null;
@@ -55,10 +59,20 @@ class SupabaseService {
   }
 
   static Future<void> signOut() async {
-    await client.auth.signOut();
+    try {
+      // Memutuskan session Supabase
+      // - Menghapus access token & refresh token dari storage lokal
+      // - Memutuskan koneksi dengan server Supabase
+      // - Mengosongkan currentUser menjadi null
+      await client.auth.signOut();
+      print('✓ User berhasil sign out');
+    } catch (e) {
+      print('❌ Error saat sign out: $e');
+      rethrow;
+    }
   }
 
-  // Invoices CRUD
+  // ======== CRUD NOTA & ITEM ========
   static Future<String> createInvoice(InvoiceModel invoice) async {
     try {
       print('🔄 Creating invoice...');
@@ -261,7 +275,7 @@ class SupabaseService {
     }
   }
 
-  // Sync
+  // ======== SYNC HELPER ========
   static Future<void> syncInvoices(List<InvoiceModel> localInvoices) async {
     try {
       for (var invoice in localInvoices) {

@@ -7,7 +7,7 @@ class AppConstants {
   static const String servicesEndpoint = '/service';
 
   // App Info
-  static const String appName = 'Laundry App';
+  static const String appName = 'Obral Laundry';
   static const String appVersion = '1.0.0';
   static const String appLicense = 'MIT License';
 

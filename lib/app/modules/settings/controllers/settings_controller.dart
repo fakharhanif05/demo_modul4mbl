@@ -45,6 +45,7 @@ class SettingsController extends GetxController {
               Get.back();
               
               if (!isGuestMode.value) {
+                // Putuskan session Supabase agar token auth dibersihkan
                 await SupabaseService.signOut();
               }
               

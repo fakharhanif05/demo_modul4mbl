@@ -58,7 +58,7 @@ class LoginView extends GetView<AuthController> {
                           const SizedBox(height: 20),
                           
                           Obx(() => Text(
-                            controller.isLoginMode.value ? 'Laundry App' : 'Daftar Akun',
+                            controller.isLoginMode.value ? 'Obral Laundry' : 'Daftar Akun',
                             style: const TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.bold,

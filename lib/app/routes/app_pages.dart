@@ -11,6 +11,8 @@ import '../modules/invoice/views/invoice_detail_view.dart';
 import '../modules/invoice/views/invoice_edit_view.dart';
 import '../modules/history/bindings/history_binding.dart';
 import '../modules/history/views/history_view.dart';
+import '../modules/location/bindings/location_binding.dart';
+import '../modules/location/views/location_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
 import '../modules/settings/views/settings_view.dart';
 import 'app_routes.dart';
@@ -60,6 +62,11 @@ class AppPages {
       name: Routes.SETTINGS,
       page: () => const SettingsView(),
       binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: Routes.LOCATION,
+      page: () => const LocationView(),
+      binding: LocationBinding(),
     ),
   ];
 }

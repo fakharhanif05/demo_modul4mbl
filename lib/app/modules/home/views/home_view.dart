@@ -14,7 +14,7 @@ class HomeView extends GetView<HomeController> {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard Laundry'),
+        title: const Text('Obral Laundry'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -48,7 +48,7 @@ class HomeView extends GetView<HomeController> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF667EEA).withOpacity(0.3),
+                            color: const Color(0xFF667EEA).withValues(alpha: 0.3),
                             blurRadius: 12,
                             offset: const Offset(0, 6),
                           ),
@@ -75,7 +75,7 @@ class HomeView extends GetView<HomeController> {
                                     Text(
                                       'Transaksi',
                                       style: TextStyle(
-                                        color: Colors.white.withOpacity(0.9),
+                                        color: Colors.white.withValues(alpha: 0.9),
                                         fontSize: 14,
                                       ),
                                     ),
@@ -98,7 +98,7 @@ class HomeView extends GetView<HomeController> {
                                     Text(
                                       'Pendapatan',
                                       style: TextStyle(
-                                        color: Colors.white.withOpacity(0.9),
+                                        color: Colors.white.withValues(alpha: 0.9),
                                         fontSize: 14,
                                       ),
                                     ),
@@ -164,6 +164,12 @@ class HomeView extends GetView<HomeController> {
                           title: 'Pengaturan',
                           color: const Color(0xFFFF6B6B),
                           onTap: () => Get.toNamed(Routes.SETTINGS),
+                        ),
+                        _buildMenuCard(
+                          icon: Icons.map,
+                          title: 'Tracking Antar Jemput',
+                          color: const Color(0xFF00BFA5),
+                          onTap: () => Get.toNamed(Routes.LOCATION),
                         ),
                       ],
                     ),
@@ -248,7 +254,7 @@ class HomeView extends GetView<HomeController> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withOpacity(0.3)),
+            border: Border.all(color: color.withValues(alpha: 0.3)),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -257,7 +263,7 @@ class HomeView extends GetView<HomeController> {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, size: 32, color: color),

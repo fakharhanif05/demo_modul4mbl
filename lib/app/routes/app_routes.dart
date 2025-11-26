@@ -9,6 +9,7 @@ abstract class Routes {
   static const INVOICE_EDIT = _Paths.INVOICE_EDIT;
   static const HISTORY = _Paths.HISTORY;
   static const SETTINGS = _Paths.SETTINGS;
+  static const LOCATION = _Paths.LOCATION;
 }
 
 abstract class _Paths {
@@ -22,4 +23,5 @@ abstract class _Paths {
   static const INVOICE_EDIT = '/invoice/edit';
   static const HISTORY = '/history';
   static const SETTINGS = '/settings';
+  static const LOCATION = '/location';
 }

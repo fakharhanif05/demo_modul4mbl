@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../controllers/invoice_controller.dart';
 import '../../../data/models/service_model.dart';
 import '../../../data/models/invoice_model.dart';
+import '../../../core/widgets/location_address_input_widget.dart';
 
 class InvoiceCreateView extends GetView<InvoiceController> {
   const InvoiceCreateView({super.key});
@@ -56,6 +57,18 @@ class InvoiceCreateView extends GetView<InvoiceController> {
                       prefixIcon: Icon(Icons.location_on),
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  
+                  // Location Picker untuk Tracking Antar Jemput
+                  Obx(() => LocationAddressInputWidget(
+                    initialAddress: controller.customerLocationAddress.value,
+                    initialLatitude: controller.customerLocationLat.value,
+                    initialLongitude: controller.customerLocationLng.value,
+                    onLocationChanged: (address, latitude, longitude) {
+                      controller.updateCustomerLocation(latitude, longitude, address);
+                    },
+                    label: 'Lokasi Antar Jemput (GPS)',
+                  )),
                   
                   const SizedBox(height: 24),
                   
