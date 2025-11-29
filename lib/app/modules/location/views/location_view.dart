@@ -64,7 +64,7 @@ class LocationView extends GetView<LocationController> {
               const SizedBox(height: 16),
               _buildOrderListCard(),
               const SizedBox(height: 16),
-              _buildGpsVsNetworkCard(),
+              _buildGpsVsNetworkCard(),           
               if (controller.locationError.value.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 _buildErrorCard(context),
@@ -218,17 +218,21 @@ class LocationView extends GetView<LocationController> {
                 Text(
                   value,
                   style: GoogleFonts.poppins(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   label,
                   style: GoogleFonts.poppins(
-                    fontSize: 10,
+                    fontSize: 9,
                     color: Colors.white.withValues(alpha: 0.9),
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -302,19 +306,23 @@ class LocationView extends GetView<LocationController> {
             Text(
               label,
               style: GoogleFonts.poppins(
-                fontSize: 11,
+                fontSize: 10,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 color: isSelected ? Colors.white : Colors.black87,
               ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             if (isSelected)
               Text(
                 '(${controller.customerInvoices.length})',
                 style: GoogleFonts.poppins(
-                  fontSize: 10,
+                  fontSize: 9,
                   color: Colors.white.withValues(alpha: 0.9),
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
           ],
         ),
@@ -724,22 +732,26 @@ class LocationView extends GetView<LocationController> {
             Text(
               controller.locationError.value,
               style: const TextStyle(color: Colors.redAccent),
+              softWrap: true,
             ),
             const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              children: [
-                OutlinedButton.icon(
-                  onPressed: controller.openLocationSettings,
-                  icon: const Icon(Icons.settings),
-                  label: const Text('Pengaturan Lokasi'),
-                ),
-                OutlinedButton.icon(
-                  onPressed: controller.openAppSettings,
-                  icon: const Icon(Icons.app_settings_alt),
-                  label: const Text('Izin Aplikasi'),
-                ),
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: controller.openLocationSettings,
+                    icon: const Icon(Icons.settings, size: 18),
+                    label: const Text('Pengaturan', style: TextStyle(fontSize: 12)),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton.icon(
+                    onPressed: controller.openAppSettings,
+                    icon: const Icon(Icons.app_settings_alt, size: 18),
+                    label: const Text('Izin Aplikasi', style: TextStyle(fontSize: 12)),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -789,9 +801,6 @@ class LocationView extends GetView<LocationController> {
               position: controller.gpsPosition.value,
               isLoading: controller.isGpsLoading.value,
               duration: controller.gpsFixDuration.value,
-              expectedAccuracy: 'Sangat Tinggi (5-15m)',
-              expectedSpeed: 'Lambat (20-30 detik)',
-              expectedRequirement: 'Satelit (outdoor)',
             )),
             const SizedBox(height: 12),
             // Network Location Section - Dynamic
@@ -805,9 +814,6 @@ class LocationView extends GetView<LocationController> {
               position: controller.networkPosition.value,
               isLoading: controller.isNetworkLoading.value,
               duration: controller.networkFixDuration.value,
-              expectedAccuracy: 'Sedang (50-1000m)',
-              expectedSpeed: 'Cepat (1-5 detik)',
-              expectedRequirement: 'Internet/Celltower',
             )),
             const SizedBox(height: 12),
             // Comparison Analysis Section
@@ -888,12 +894,14 @@ class LocationView extends GetView<LocationController> {
                         children: [
                           const Icon(Icons.compare, color: Colors.teal, size: 20),
                           const SizedBox(width: 8),
-                          Text(
-                            '✓ Analisis Perbandingan Selesai',
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.teal.shade800,
+                          Expanded(
+                            child: Text(
+                              '✓ Analisis Perbandingan Selesai',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.teal.shade800,
+                              ),
                             ),
                           ),
                         ],
@@ -985,9 +993,6 @@ class LocationView extends GetView<LocationController> {
     required Position? position,
     required bool isLoading,
     required Duration? duration,
-    required String expectedAccuracy,
-    required String expectedSpeed,
-    required String expectedRequirement,
   }) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -1082,43 +1087,6 @@ class LocationView extends GetView<LocationController> {
               color: iconColor,
             ),
           const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildComparisonDetail(
-                  'Akurasi (Expected)',
-                  expectedAccuracy,
-                  '⭐',
-                ),
-                const SizedBox(height: 6),
-                _buildComparisonDetail(
-                  'Kecepatan (Expected)',
-                  expectedSpeed,
-                  '⚡',
-                ),
-                const SizedBox(height: 6),
-                _buildComparisonDetail(
-                  'Kebutuhan',
-                  expectedRequirement,
-                  '📍',
-                ),
-                if (duration != null) ...[
-                  const SizedBox(height: 6),
-                  _buildComparisonDetail(
-                    'Waktu Selesai',
-                    duration.inSeconds < 1 ? '${duration.inMilliseconds}ms' : '${duration.inSeconds}s',
-                    '⏱️',
-                  ),
-                ],
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -1126,6 +1094,7 @@ class LocationView extends GetView<LocationController> {
 
   Widget _buildComparisonAnalysis(String label, String value, String info) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: Column(
@@ -1135,16 +1104,18 @@ class LocationView extends GetView<LocationController> {
                 label,
                 style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
               ),
+              const SizedBox(height: 2),
               Text(
-                value,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.teal),
-              ),
+          info,
+          style: TextStyle(fontSize: 11, color: Colors.grey.shade700, fontStyle: FontStyle.italic),
+        ),
             ],
           ),
         ),
+        const SizedBox(width: 8),
         Text(
-          info,
-          style: TextStyle(fontSize: 10, color: Colors.grey.shade700, fontStyle: FontStyle.italic),
+          value,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.teal),
         ),
       ],
     );
@@ -1165,6 +1136,7 @@ class LocationView extends GetView<LocationController> {
         child: Text(
           'Status: Belum mendapatkan fix (Tekan tombol untuk ambil lokasi)',
           style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+          softWrap: true,
         ),
       );
     }
@@ -1183,9 +1155,15 @@ class LocationView extends GetView<LocationController> {
               Expanded(
                 child: Text(
                   'Lat: ${position.latitude.toStringAsFixed(6)}',
-                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey.shade700,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 4),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
@@ -1199,6 +1177,7 @@ class LocationView extends GetView<LocationController> {
                     fontWeight: FontWeight.w600,
                     color: Colors.green.shade700,
                   ),
+                  maxLines: 1,
                 ),
               ),
             ],
@@ -1206,12 +1185,19 @@ class LocationView extends GetView<LocationController> {
           const SizedBox(height: 4),
           Text(
             'Lon: ${position.longitude.toStringAsFixed(6)}',
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey.shade700,
+            ),
+            maxLines: 2,
+            softWrap: true,
           ),
           const SizedBox(height: 4),
           Text(
-            'Akurasi: ${position.accuracy.toStringAsFixed(1)}m | Timestamp: ${DateFormat('HH:mm:ss').format(position.timestamp)}',
+            'Akurasi: ${position.accuracy.toStringAsFixed(1)}m | Waktu: ${DateFormat('HH:mm:ss').format(position.timestamp)}',
             style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+            maxLines: 2,
+            softWrap: true,
           ),
         ],
       ),
@@ -1230,10 +1216,14 @@ class LocationView extends GetView<LocationController> {
               Text(
                 label,
                 style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               Text(
                 value,
                 style: TextStyle(fontSize: 10, color: Colors.grey.shade700),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),

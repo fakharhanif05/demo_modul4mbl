@@ -23,7 +23,8 @@ class AuthController extends GetxController {
   void checkAuthStatus() {
     // Jika session Supabase masih aktif, langsung masuk ke beranda
     if (SupabaseService.isLoggedIn && !SharedPrefsService.isGuestMode) {
-      NavigationUtils.safeOffAllNamed(Routes.HOME);
+      debugPrint('[AuthController] checkAuthStatus -> navigating to ROOT');
+      NavigationUtils.safeOffAllNamed(Routes.ROOT);
     }
   }
 
@@ -60,7 +61,8 @@ class AuthController extends GetxController {
 
       if (user != null) {
         await SharedPrefsService.setGuestMode(false);
-        NavigationUtils.safeOffAllNamed(Routes.HOME);
+        debugPrint('[AuthController] login successful -> navigating to ROOT for ${user.email}');
+        NavigationUtils.safeOffAllNamed(Routes.ROOT);
         Get.snackbar(
           'Berhasil',
           'Login berhasil! Selamat datang ${user.email}',
@@ -141,7 +143,8 @@ class AuthController extends GetxController {
 
   Future<void> continueAsGuest() async {
     await SharedPrefsService.setGuestMode(true);
-    NavigationUtils.safeOffAllNamed(Routes.HOME);
+    debugPrint('[AuthController] continueAsGuest -> navigating to ROOT');
+    NavigationUtils.safeOffAllNamed(Routes.ROOT);
     Get.snackbar(
       'Guest Mode',
       'Anda masuk sebagai guest. Data tidak akan tersinkronisasi ke cloud',

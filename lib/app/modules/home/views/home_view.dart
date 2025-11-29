@@ -15,12 +15,6 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Obral Laundry'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => Get.toNamed(Routes.SETTINGS),
-          ),
-        ],
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -139,7 +133,8 @@ class HomeView extends GetView<HomeController> {
                       crossAxisCount: 2,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
-                      childAspectRatio: 1.1,
+                      // make cards slightly taller so long titles can wrap
+                      childAspectRatio: 0.95,
                       children: [
                         _buildMenuCard(
                           icon: Icons.note_add,
@@ -148,16 +143,10 @@ class HomeView extends GetView<HomeController> {
                           onTap: () => Get.toNamed(Routes.INVOICE_CREATE),
                         ),
                         _buildMenuCard(
-                          icon: Icons.history,
-                          title: 'History Nota',
-                          color: const Color(0xFF764BA2),
-                          onTap: () => Get.toNamed(Routes.HISTORY),
-                        ),
-                        _buildMenuCard(
-                          icon: Icons.local_laundry_service,
-                          title: 'Kelola Layanan',
-                          color: const Color(0xFF43E97B),
-                          onTap: () => Get.toNamed(Routes.SERVICES),
+                          icon: Icons.local_shipping,
+                          title: 'Tracking Antar Jemput',
+                          color: const Color(0xFFFFB84D),
+                          onTap: () => Get.toNamed(Routes.LOCATION),
                         ),
                         _buildMenuCard(
                           icon: Icons.settings,
@@ -166,11 +155,23 @@ class HomeView extends GetView<HomeController> {
                           onTap: () => Get.toNamed(Routes.SETTINGS),
                         ),
                         _buildMenuCard(
-                          icon: Icons.map,
-                          title: 'Tracking Antar Jemput',
-                          color: const Color(0xFF00BFA5),
-                          onTap: () => Get.toNamed(Routes.LOCATION),
+                          icon: Icons.list_alt,
+                          title: 'Daftar Pesanan',
+                          color: const Color(0xFF4ECDC4),
+                          onTap: () => Get.toNamed(Routes.ORDERS),
                         ),
+                        _buildMenuCard(
+                          icon: Icons.bar_chart,
+                          title: 'Laporan Keuangan',
+                          color: const Color(0xFF51CF66),
+                          onTap: () => Get.toNamed(Routes.REPORTS),
+                        ),
+                        _buildMenuCard(
+                          icon: Icons.local_shipping,
+                          title: 'Pengambilan',
+                          color: const Color(0xFFFFB84D),
+                          onTap: () => Get.toNamed(Routes.PICKUP),
+                                              ),
                       ],
                     ),
                     
@@ -251,32 +252,38 @@ class HomeView extends GetView<HomeController> {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: color.withValues(alpha: 0.3)),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 60,
-                height: 60,
+                width: 50,
+                height: 50,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 32, color: color),
+                child: Icon(icon, size: 28, color: color),
               ),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: color,
+              const SizedBox(height: 10),
+              Flexible(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 3,
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),

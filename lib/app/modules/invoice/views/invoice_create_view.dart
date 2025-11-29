@@ -124,19 +124,28 @@ class InvoiceCreateView extends GetView<InvoiceController> {
                   
                   // Services Section
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Layanan Dipilih',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      Expanded(
+                        child: Text(
+                          'Layanan Dipilih',
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          softWrap: true,
+                          overflow: TextOverflow.visible,
+                        ),
                       ),
-                      ElevatedButton.icon(
-                        onPressed: () => _showAddServiceDialog(context),
-                        icon: const Icon(Icons.add),
-                        label: const Text('Tambah'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF667EEA),
-                          foregroundColor: Colors.white,
+                      const SizedBox(width: 8),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(minWidth: 80),
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showAddServiceDialog(context),
+                          icon: const Icon(Icons.add),
+                          label: const Text('Tambah'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF667EEA),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          ),
                         ),
                       ),
                     ],

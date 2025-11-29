@@ -275,6 +275,110 @@ class SupabaseService {
     }
   }
 
+  // ======== ORDERS / PICKUPS / REPORTS ========
+  /// Get orders for the current user. Reuses invoice model as 'order'.
+  static Future<List<InvoiceModel>> getOrders() async {
+    // For now, orders come from invoices table
+    return await getInvoices();
+  }
+
+  /// Get pickups: invoices that have a pickup_date set and are not completed yet.
+  static Future<List<InvoiceModel>> getPickups() async {
+    try {
+      if (currentUser == null) return [];
+
+      final data = await client
+          .from('invoices')
+          .select('*, invoice_items(*)')
+          .eq('user_id', currentUser!.id)
+          .order('pickup_date', ascending: true);
+
+      if (data.isEmpty) return [];
+
+      final invoices = <InvoiceModel>[];
+
+      for (var json in data) {
+        final itemsJson = json['invoice_items'] as List?;
+        final items = itemsJson?.map((item) => InvoiceItem.fromJson(item as Map<String, dynamic>)).toList() ?? [];
+
+        final invoiceJson = Map<String, dynamic>.from(json);
+        invoiceJson.remove('invoice_items');
+
+        final inv = InvoiceModel.fromJson({
+          ...invoiceJson,
+          'items': items.map((i) => i.toJson()).toList(),
+        });
+
+        // only pickups that have pickupDate and not completed
+        if (inv.pickupDate != null && inv.status != 'done') {
+          invoices.add(inv);
+        }
+      }
+
+      return invoices;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Mark pickup (invoice) as completed. Sets status = 'done' and completed_date.
+  static Future<void> completePickup(String id) async {
+    try {
+      await client.from('invoices').update({
+        'status': 'done',
+        'completed_date': DateTime.now().toIso8601String(),
+      }).eq('id', id);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Get report summary between two dates.
+  /// Returns map: { 'totalRevenue': double, 'totalOrders': int, 'invoices': List<InvoiceModel> }
+  static Future<Map<String, dynamic>> getReportSummary(DateTime from, DateTime to) async {
+    try {
+      if (currentUser == null) return {'totalRevenue': 0.0, 'totalOrders': 0, 'invoices': <InvoiceModel>[]};
+
+      final fromStr = from.toIso8601String();
+      final toStr = to.toIso8601String();
+
+      final data = await client
+          .from('invoices')
+          .select('*, invoice_items(*)')
+          .eq('user_id', currentUser!.id)
+          .gte('created_at', fromStr)
+          .lte('created_at', toStr)
+          .order('created_at', ascending: true);
+
+      if (data.isEmpty) {
+        return {'totalRevenue': 0.0, 'totalOrders': 0, 'invoices': <InvoiceModel>[]};
+      }
+
+      double total = 0.0;
+      final invoices = <InvoiceModel>[];
+
+      for (var json in data) {
+        final itemsJson = json['invoice_items'] as List?;
+        final items = itemsJson?.map((item) => InvoiceItem.fromJson(item as Map<String, dynamic>)).toList() ?? [];
+
+        final invoiceJson = Map<String, dynamic>.from(json);
+        invoiceJson.remove('invoice_items');
+
+        final inv = InvoiceModel.fromJson({
+          ...invoiceJson,
+          'items': items.map((i) => i.toJson()).toList(),
+        });
+
+        total += inv.total;
+        invoices.add(inv);
+      }
+
+      return {'totalRevenue': total, 'totalOrders': invoices.length, 'invoices': invoices};
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // ======== SYNC HELPER ========
   static Future<void> syncInvoices(List<InvoiceModel> localInvoices) async {
     try {
