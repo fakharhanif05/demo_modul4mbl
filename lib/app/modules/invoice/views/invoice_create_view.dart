@@ -125,10 +125,10 @@ class InvoiceCreateView extends GetView<InvoiceController> {
                   // Services Section
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           'Layanan Dipilih',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           maxLines: 2,
                           softWrap: true,
                           overflow: TextOverflow.visible,

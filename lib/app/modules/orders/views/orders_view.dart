@@ -8,6 +8,7 @@ class OrdersView extends GetView<OrdersController> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daftar Pesanan'),
@@ -25,13 +26,13 @@ class OrdersView extends GetView<OrdersController> {
                 const Icon(Icons.inbox, size: 80, color: Colors.grey),
                 const SizedBox(height: 16),
                 const Text('Tidak ada pesanan', style: TextStyle(fontSize: 16)),
-                const SizedBox(height: 12),
+                const SizedBox(height: 24),
                 ElevatedButton.icon(
                   onPressed: () => Get.toNamed(Routes.INVOICE_CREATE),
                   icon: const Icon(Icons.note_add),
                   label: const Text('Buat Nota'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF667EEA),
+                    backgroundColor: theme.colorScheme.primary,
                   ),
                 ),
               ],
@@ -41,7 +42,7 @@ class OrdersView extends GetView<OrdersController> {
         return RefreshIndicator(
           onRefresh: () async => controller.refreshOrders(),
           child: ListView.builder(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             itemCount: controller.orders.length,
             itemBuilder: (context, index) {
               final order = controller.orders[index];
@@ -57,18 +58,18 @@ class OrdersView extends GetView<OrdersController> {
                         children: [
                           Text(
                             order['id'],
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
+                              horizontal: 12, 
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Color(order['color']).withValues(alpha: 0.1),
+                              color: Color(order['color']).withOpacity(0.1),
                               border: Border.all(color: Color(order['color'])),
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -83,15 +84,15 @@ class OrdersView extends GetView<OrdersController> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 10),
                       Text(
                         order['customer'],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w500, 
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12), // Adjusted spacing here
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -100,26 +101,17 @@ class OrdersView extends GetView<OrdersController> {
                             children: [
                               Text(
                                 'Berat: ${order['weight']}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                ),
+                                style: theme.textTheme.bodySmall,
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Layanan: ${order['service']}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                ),
+                                style: theme.textTheme.bodySmall,
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Tgl: ${order['date']}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                ),
+                                style: theme.textTheme.bodySmall,
                               ),
                             ],
                           ),
@@ -127,11 +119,11 @@ class OrdersView extends GetView<OrdersController> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                order['total'],
-                                style: const TextStyle(
+                                order['total'], 
+                                style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFF667EEA),
+                                  color: theme.colorScheme.primary,
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -143,14 +135,14 @@ class OrdersView extends GetView<OrdersController> {
                                     duration: const Duration(seconds: 2),
                                   );
                                 },
-                                icon: const Icon(Icons.info, size: 16),
-                                label: const Text('Detail'),
+                                icon: Icon(Icons.info, size: 16, color: theme.colorScheme.onPrimary),
+                                label: Text('Detail', style: TextStyle(color: theme.colorScheme.onPrimary)),
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
+                                    horizontal: 12, 
                                     vertical: 6,
                                   ),
-                                  backgroundColor: const Color(0xFF667EEA),
+                                  backgroundColor: theme.colorScheme.primary,
                                 ),
                               ),
                             ],

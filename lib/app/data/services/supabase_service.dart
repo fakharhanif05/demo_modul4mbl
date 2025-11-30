@@ -25,9 +25,7 @@ class SupabaseService {
         return UserModel(
           id: response.user!.id,
           email: response.user!.email!,
-          createdAt: response.user!.createdAt != null 
-              ? DateTime.parse(response.user!.createdAt!) 
-              : null,
+          createdAt: DateTime.parse(response.user!.createdAt!),
         );
       }
       return null;
@@ -47,9 +45,7 @@ class SupabaseService {
         return UserModel(
           id: response.user!.id,
           email: response.user!.email!,
-          createdAt: response.user!.createdAt != null 
-              ? DateTime.parse(response.user!.createdAt!) 
-              : null,
+          createdAt: DateTime.parse(response.user!.createdAt!),
         );
       }
       return null;

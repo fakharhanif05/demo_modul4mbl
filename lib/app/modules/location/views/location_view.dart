@@ -81,7 +81,7 @@ class LocationView extends GetView<LocationController> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [AppTheme.primaryColor, AppTheme.secondaryColor],
@@ -378,7 +378,7 @@ class LocationView extends GetView<LocationController> {
             children: [
               Row(
                 children: [
-                  Icon(Icons.list_alt, color: AppTheme.primaryColor),
+                  const Icon(Icons.list_alt, color: AppTheme.primaryColor),
                   const SizedBox(width: 8),
                   Text(
                     'Daftar Order ${controller.filterStatusLabel} (${controller.customerInvoices.length})',
@@ -494,7 +494,7 @@ class LocationView extends GetView<LocationController> {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.navigation, size: 14, color: AppTheme.secondaryColor),
+                        const Icon(Icons.navigation, size: 14, color: AppTheme.secondaryColor),
                         const SizedBox(width: 4),
                         Text(
                           'Jarak: ${(distance / 1000).toStringAsFixed(2)} km',
@@ -511,7 +511,7 @@ class LocationView extends GetView<LocationController> {
               ),
             ),
             if (isSelected)
-              Icon(Icons.check_circle, color: AppTheme.primaryColor),
+              const Icon(Icons.check_circle, color: AppTheme.primaryColor),
           ],
         ),
       ),
@@ -575,7 +575,7 @@ class LocationView extends GetView<LocationController> {
                       children: [
                         Container(
                           padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: AppTheme.primaryColor,
                             shape: BoxShape.circle,
                           ),

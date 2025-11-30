@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'app/routes/app_pages.dart';
 import 'app/data/services/shared_prefs_service.dart';
 import 'app/data/services/hive_service.dart';
@@ -9,6 +10,9 @@ import 'app/core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize localization
+  await initializeDateFormatting('id_ID', null);
   
   // Initialize Hive
   await Hive.initFlutter();

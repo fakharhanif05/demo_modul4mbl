@@ -12,14 +12,14 @@ class LocationAddressInputWidget extends StatefulWidget {
   final bool required;
 
   const LocationAddressInputWidget({
-    Key? key,
+    super.key,
     required this.initialAddress,
     this.initialLatitude,
     this.initialLongitude,
     required this.onLocationChanged,
     this.label = 'Alamat Pelanggan',
     this.required = true,
-  }) : super(key: key);
+  });
 
   @override
   State<LocationAddressInputWidget> createState() => _LocationAddressInputWidgetState();

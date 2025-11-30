@@ -11,11 +11,11 @@ class LocationPickerWidget extends StatefulWidget {
   final String title;
 
   const LocationPickerWidget({
-    Key? key,
+    super.key,
     this.initialLocation,
     required this.onLocationSelected,
     this.title = 'Pilih Lokasi',
-  }) : super(key: key);
+  });
 
   @override
   State<LocationPickerWidget> createState() => _LocationPickerWidgetState();

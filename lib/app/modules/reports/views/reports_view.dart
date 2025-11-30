@@ -20,9 +20,12 @@ class ReportsView extends GetView<ReportsController> {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+        return RefreshIndicator(
+          onRefresh: () async => controller.loadReportData(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Period Selector
@@ -47,7 +50,7 @@ class ReportsView extends GetView<ReportsController> {
                               labelStyle: TextStyle(
                                 color: controller.selectedPeriod.value == period
                                     ? Colors.white
-                                    : Colors.black,
+                                    : null, // Use default color
                               ),
                             ),
                           ))
@@ -68,7 +71,7 @@ class ReportsView extends GetView<ReportsController> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF667EEA).withValues(alpha: 0.3),
+                      color: const Color(0xFF667EEA).withOpacity(0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 6),
                     ),
@@ -183,46 +186,56 @@ class ReportsView extends GetView<ReportsController> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
-                  children: controller.revenueData
-                      .map((data) => Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  data['day'],
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                const SizedBox(height: 4),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: LinearProgressIndicator(
-                                    value: (data['amount'] as int) / 700000,
-                                    minHeight: 8,
-                                    backgroundColor: Colors.grey[200],
-                                    valueColor:
-                                        const AlwaysStoppedAnimation<Color>(
-                                      Color(0xFF667EEA),
+                  children: controller.revenueData.isEmpty
+                      ? [
+                          const SizedBox(height: 40),
+                          const Text(
+                            'Tidak ada data pendapatan untuk periode ini.',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 40),
+                        ]
+                      : controller.revenueData
+                          .map((data) => Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      data['day']?.toString() ?? 'N/A',
+                                      style: const TextStyle(fontSize: 12),
                                     ),
-                                  ),
+                                    const SizedBox(height: 4),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: LinearProgressIndicator(
+                                        value: (data['amount'] as num) /
+                                            controller.maxRevenueInChart.value,
+                                        minHeight: 8,
+                                        backgroundColor: Colors.grey[200],
+                                        valueColor:
+                                            const AlwaysStoppedAnimation<Color>(
+                                          Color(0xFF667EEA),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      currencyFormatter.format(data['amount']),
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  currencyFormatter.format(data['amount']),
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ))
-                      .toList(),
+                              ))
+                          .toList(),
                 ),
               ),
             ],
           ),
-        );
+        ));
       }),
     );
   }

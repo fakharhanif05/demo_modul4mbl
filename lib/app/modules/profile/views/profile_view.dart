@@ -17,7 +17,7 @@ class ProfileView extends GetView<ProfileController> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
-            children: [
+            children: [ Obx(() => 
               // Profile Header
               Container(
                 padding: const EdgeInsets.all(20),
@@ -52,24 +52,25 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'Obral Laundry',
+                    Text(
+                      controller.isGuestMode.value ? 'Guest User' : 'Obral Laundry',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      'admin@obrallaundy.com',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 12,
+                    if (!controller.isGuestMode.value)
+                      Text(
+                        controller.userEmail.value,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
                   ],
                 ),
-              ),
+              )),
               const SizedBox(height: 24),
               // Menu Items
               _buildMenuTile(
@@ -114,39 +115,20 @@ class ProfileView extends GetView<ProfileController> {
               ),
               const SizedBox(height: 24),
               // Logout Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Get.defaultDialog(
-                      title: 'Logout',
-                      middleText: 'Apakah Anda yakin ingin keluar?',
-                      actions: [
-                        TextButton(
-                          onPressed: () => Get.back(),
-                          child: const Text('Batal'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Get.offAllNamed(Routes.LOGIN);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                          ),
-                          child: const Text('Logout'),
-                        ),
-                      ],
-                    );
-                  },
-                  icon: const Icon(Icons.logout),
-                  label: const Text('Logout'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
+              Obx(() => SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton.icon(
+                      onPressed: controller.logout,
+                      icon: const Icon(Icons.logout),
+                      label: Text(controller.isGuestMode.value ? 'Login' : 'Logout'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                  ),
             ],
           ),
         ),
@@ -176,5 +158,11 @@ class ProfileView extends GetView<ProfileController> {
         onTap: onTap,
       ),
     );
+  }
+}
+
+extension ColorAlpha on Color {
+  Color withValues({int? alpha}) {
+    return withAlpha(alpha ?? this.alpha);
   }
 }

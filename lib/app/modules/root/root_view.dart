@@ -14,10 +14,10 @@ class RootView extends GetView<RootController> {
   Widget build(BuildContext context) {
     // Untuk debugging: gunakan halaman placeholder jika sedang debug
     final pages = <Widget>[
-      HomeView(),
-      HistoryView(),
-      ServicesView(),
-      ProfileView(),
+      const HomeView(),
+      const HistoryView(),
+      const ServicesView(),
+      const ProfileView(),
     ];
 
     return Obx(
@@ -31,9 +31,8 @@ class RootView extends GetView<RootController> {
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: controller.selectedIndex.value,
             type: BottomNavigationBarType.fixed,
-            selectedItemColor: const Color(0xFF667EEA),
+            selectedItemColor: Theme.of(context).colorScheme.primary,
             unselectedItemColor: Colors.grey,
-            backgroundColor: Colors.white,
             onTap: controller.changeTab,
             items: const [
               BottomNavigationBarItem(

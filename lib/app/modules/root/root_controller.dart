@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+import '../home/controllers/home_controller.dart';
 import '../reports/controllers/reports_controller.dart';
 import '../orders/controllers/orders_controller.dart';
 import '../pickup/controllers/pickup_controller.dart';
@@ -20,6 +21,9 @@ class RootController extends GetxController {
 
     // Pemicu refresh untuk halaman yang datanya mungkin berubah
     switch (index) {
+      case 0: // Index untuk Home
+        if (Get.isRegistered<HomeController>()) Get.find<HomeController>().loadDashboardData();
+        break;
       case 1: // Index untuk History/Orders
         if (Get.isRegistered<OrdersController>()) Get.find<OrdersController>().refreshOrders();
         break;

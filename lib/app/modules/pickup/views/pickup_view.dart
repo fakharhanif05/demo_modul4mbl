@@ -17,10 +17,10 @@ class PickupView extends GetView<PickupController> {
           return const Center(child: CircularProgressIndicator());
         }
         if (controller.pickups.isEmpty) {
-          return Center(
+          return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 Icon(Icons.local_shipping, size: 80, color: Colors.grey),
                 SizedBox(height: 16),
                 Text('Tidak ada jadwal pengambilan', style: TextStyle(fontSize: 16)),

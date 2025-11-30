@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/services/shared_prefs_service.dart';
 import '../../../data/services/hive_service.dart';
-import '../../../data/services/supabase_service.dart';
-import '../../../routes/app_routes.dart';
-import '../../../core/utils/navigation_utils.dart';
 
 class SettingsController extends GetxController {
   final isDarkMode = false.obs;
@@ -27,45 +24,6 @@ class SettingsController extends GetxController {
       'Theme',
       'Theme changed to ${isDarkMode.value ? "Dark" : "Light"} mode',
       snackPosition: SnackPosition.BOTTOM,
-    );
-  }
-
-  Future<void> logout() async {
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Apakah Anda yakin ingin keluar?'),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Batal'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Get.back();
-              
-              if (!isGuestMode.value) {
-                // Putuskan session Supabase agar token auth dibersihkan
-                await SupabaseService.signOut();
-              }
-              
-              await SharedPrefsService.setGuestMode(false);
-              NavigationUtils.safeOffAllNamed(Routes.LOGIN);
-
-              Get.snackbar(
-                'Logout',
-                'Berhasil logout',
-                snackPosition: SnackPosition.BOTTOM,
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Logout'),
-          ),
-        ],
-      ),
     );
   }
 
